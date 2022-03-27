@@ -21,10 +21,24 @@ const addMessage = (user, msg) => {
 
 const getMessages = (filterUser) => {
     return new Promise((resolve, reject) => {
-        resolve(store.list(filterUser.toLowerCase()));
+        resolve(store.list(filterUser));
     });
 };
 
+const deleteMessage = (id) => {
+    return new Promise((resolve, reject) => {
+        if (!id) {
+            reject(`ID invalido`);
+            return false;
+        }
+        store
+            .remove(id)
+            .then(() => {
+                resolve();
+            })
+            .catch((e) => reject(e));
+    });
+};
 const updateMessage = (id, msg) => {
     return new Promise(async (resolve, reject) => {
         if (id && msg) {
@@ -51,4 +65,5 @@ module.exports = {
     addMessage,
     getMessages,
     updateMessage,
+    deleteMessage,
 };
