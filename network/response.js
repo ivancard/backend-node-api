@@ -1,9 +1,26 @@
+const statusMessages = {
+    200: 'Done',
+    201: 'Created',
+    400: 'Invalid format',
+    500: 'Internal Error',
+};
+
 exports.success = function (req, res, msg, estado) {
     res.setHeader('Content-Type', 'text/json');
 
-    res.status(estado || 200).send({
+    let statusCode = estado;
+    let statusMessage = msg;
+
+    if (!estado) {
+        estado = 200;
+    }
+    if (!msg) {
+        statusMessage = statusMessages[estado];
+    }
+
+    res.status(statusCode).send({
         error: '',
-        body: msg,
+        body: statusMessage,
     });
     res.end();
 };

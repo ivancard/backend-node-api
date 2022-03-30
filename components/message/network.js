@@ -1,10 +1,22 @@
 const express = require('express');
+const multer = require('multer');
 const response = require('../../network/response');
 const controller = require('./controller');
 
 const router = express.Router();
 
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './public/files/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    },
+});
+const upload = multer({ storage: storage });
+
 router.get('/', (req, res) => {
+    req.headers['auth'];
     const filterMessages = req.query.user || null;
     controller
         .getMessages(filterMessages)
@@ -16,9 +28,9 @@ router.get('/', (req, res) => {
         });
 });
 
-router.post('/', (req, res) => {
+router.post('/', upload.single('file'), (req, res) => {
     controller
-        .addMessage(req.body.user, req.body.msg)
+        .addMessage(req.body.chat, req.body.user, req.body.msg, req.file)
         .then((fullMesage) => {
             console.log(fullMesage);
             response.success(req, res, fullMesage, 201);
